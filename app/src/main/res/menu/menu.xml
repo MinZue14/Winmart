@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:checkableBehavior="single">
+
+        <item
+            android:icon="@drawable/baseline_qr_code_scanner"
+            android:id="@+id/navTraCuu"
+            android:title="Tra Cứu">
+        </item>
+
+        <item
+            android:icon="@drawable/baseline_nhanvien"
+            android:id="@+id/navNhanVien"
+            android:title="Nhân Viên">
+        </item>
+    </group>
+
+<item
+    android:title="Nội dung">
+    <menu>
+        <group android:checkableBehavior="single">
+            <item
+                android:icon="@drawable/baseline_nhaphang"
+                android:id="@+id/navNhapHang"
+                android:title="Nhập Hàng">
+            </item>
+
+            <item
+                android:icon="@drawable/baseline_hoadon"
+                android:id="@+id/navHoaDon"
+                android:title="Hóa Đơn">
+            </item>
+
+            <item
+                android:icon="@drawable/baseline_huyhang"
+                android:id="@+id/navHuyHang"
+                android:title="Hủy Hàng">
+            </item>
+
+            <item
+                android:icon="@drawable/baseline_hsd"
+                android:id="@+id/navHSD"
+                android:title="Quản Lý HSD">
+            </item>
+        </group>
+    </menu>
+</item>
+<item
+    android:title="Bổ sung">
+    <menu>
+        <group android:checkableBehavior="single">
+            <item
+                android:icon="@drawable/baseline_logout"
+                android:id="@+id/navLogOut"
+                android:title="Đăng Xuất">
+            </item>
+        </group>
+    </menu>
+</item>
+</menu>
