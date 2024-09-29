@@ -27,18 +27,6 @@
             </item>
 
             <item
-                android:icon="@drawable/baseline_hoadon"
-                android:id="@+id/navHoaDon"
-                android:title="Hóa Đơn">
-            </item>
-
-            <item
-                android:icon="@drawable/baseline_huyhang"
-                android:id="@+id/navHuyHang"
-                android:title="Hủy Hàng">
-            </item>
-
-            <item
                 android:icon="@drawable/baseline_hsd"
                 android:id="@+id/navHSD"
                 android:title="Quản Lý HSD">

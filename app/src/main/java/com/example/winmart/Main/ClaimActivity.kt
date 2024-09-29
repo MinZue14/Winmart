@@ -79,20 +79,8 @@ class ClaimActivity : AppCompatActivity() {
                     true
                 }
 
-                R.id.navHoaDon -> {
-                    val intent = Intent(this, InvoiceActivity::class.java)
-                    startActivity(intent)
-                    true
-                }
-
-                R.id.navHuyHang -> {
-                    val intent = Intent(this, MainActivity::class.java)
-                    startActivity(intent)
-                    true
-                }
-
                 R.id.navHSD -> {
-                    val intent = Intent(this, MainActivity::class.java)
+                    val intent = Intent(this, ExpirationActivity::class.java)
                     startActivity(intent)
                     true
                 }
@@ -169,6 +157,9 @@ class ClaimActivity : AppCompatActivity() {
             val success = dbHelper.insert(name,quantity,unit,barcode,price,status,manufactString,expirationString)
             if (success) {
                 showResultDialog("Thêm sản phẩm thành công!")
+                listProduct.clear()  // Xóa dữ liệu cũ
+                listProduct.addAll(dbHelper.getAllProducts())  // Lấy dữ liệu mới
+                productAdapter.notifyDataSetChanged()  // Thông báo adapter cập nhật lại danh sách
             } else {
                 showResultDialog("Thêm sản phẩm thất bại!")
             }

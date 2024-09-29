@@ -65,20 +65,8 @@ class ResearchActivity : AppCompatActivity() {
                     true
                 }
 
-                R.id.navHoaDon -> {
-                    val intent = Intent(this, InvoiceActivity::class.java)
-                    startActivity(intent)
-                    true
-                }
-
-                R.id.navHuyHang -> {
-                    val intent = Intent(this, MainActivity::class.java)
-                    startActivity(intent)
-                    true
-                }
-
                 R.id.navHSD -> {
-                    val intent = Intent(this, MainActivity::class.java)
+                    val intent = Intent(this, ExpirationActivity::class.java)
                     startActivity(intent)
                     true
                 }

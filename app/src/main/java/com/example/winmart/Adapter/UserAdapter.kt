@@ -13,7 +13,7 @@ class UserAdapter(val context: Context, var userList: ArrayList<Users>) :
     RecyclerView.Adapter<UserAdapter.UserViewHolder>() {
 
     class UserViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val textViewUsername: TextView = itemView.findViewById(R.id.invoiceProducts)
+        val textViewUsername: TextView = itemView.findViewById(R.id.TextViewUsername)
         val textViewEmail: TextView = itemView.findViewById(R.id.TextViewUsermail)
         val textViewAddress: TextView = itemView.findViewById(R.id.TextViewUserAddress)
     }

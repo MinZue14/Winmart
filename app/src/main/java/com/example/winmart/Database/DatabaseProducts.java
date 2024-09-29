@@ -146,4 +146,53 @@ public class DatabaseProducts extends SQLiteOpenHelper {
 
         return productList;
     }
+
+    public List<Products> getProductsExpiringSoon(int days) {
+        List<Products> productList = new ArrayList<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        // Lấy ngày hiện tại
+        long currentTimeMillis = System.currentTimeMillis();
+        Date currentDate = new Date(currentTimeMillis);
+
+        // Tính toán ngày giới hạn (trong vòng X ngày tới)
+        long limitTimeMillis = currentTimeMillis + (long) days * 24 * 60 * 60 * 1000;
+        Date limitDate = new Date(limitTimeMillis);
+
+        // Tạo truy vấn để lấy các sản phẩm có ngày hết hạn trong khoảng 15 ngày
+        String query = "SELECT * FROM " + TABLE_NAME + " WHERE " + COLUMN_PRODUCT_EXPIRATION + " BETWEEN ? AND ?";
+        Cursor cursor = db.rawQuery(query, new String[]{currentDate.toString(), limitDate.toString()});
+
+        if (cursor.moveToFirst()) {
+            do {
+                try {
+                    String productID = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_PRODUCT_ID));
+                    String productName = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_PRODUCT_NAME));
+                    String productQuantity = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_PRODUCT_QUANTITY));
+                    String productUnit = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_PRODUCT_UNIT));
+                    String productBarcode = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_PRODUCT_BARCODE));
+                    String productPrice = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_PRODUCT_PRICE));
+                    String productStatus = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_PRODUCT_STATUS));
+                    String productManufact = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_PRODUCT_MANUFACTURING));
+                    String productExpiration = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_PRODUCT_EXPIRATION));
+
+                    // Chuyển đổi từ String sang Date
+                    Date PManu = Date.valueOf(productManufact);
+                    Date PExpi = Date.valueOf(productExpiration);
+
+                    // Tạo đối tượng Products từ dữ liệu trong cơ sở dữ liệu và thêm vào danh sách
+                    Products product = new Products(productID, productName, productQuantity, productUnit,
+                            productBarcode, productPrice, productStatus, PManu, PExpi);
+                    productList.add(product);
+                } catch (Exception e) {
+                    Log.e("TAG DatabaseError", "Error converting data: " + e.getMessage());
+                }
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        db.close();
+
+        return productList;
+    }
+
 }

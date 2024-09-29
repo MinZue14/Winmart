@@ -41,7 +41,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Nhập hàng"
+                        android:text="Tra Cứu"
                         android:layout_gravity="center"
                         android:textColor="#fff"
                         android:layout_marginLeft="50dp"

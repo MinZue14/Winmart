@@ -1,31 +1,32 @@
-package com.example.winmart
+package com.example.winmart.Main
 
-import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import androidx.drawerlayout.widget.DrawerLayout
-import com.example.winmart.Main.ClaimActivity
-import com.example.winmart.Main.EmployeeActivity
-import com.example.winmart.Main.ExpirationActivity
-import com.example.winmart.Main.LoginActivity
-import com.example.winmart.Main.ResearchActivity
-import com.example.winmart.databinding.ActivityMainBinding
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.example.winmart.Adapter.ProductAdapter
+import com.example.winmart.Database.DatabaseProducts
+import com.example.winmart.MainActivity
+import com.example.winmart.R
+import com.example.winmart.databinding.ActivityClaimBinding
+import com.example.winmart.databinding.ActivityExpirationBinding
 import com.example.winmart.databinding.HeaderMenuBinding
 import com.google.android.material.navigation.NavigationView
 
-class MainActivity : AppCompatActivity() {
-    lateinit var binding: ActivityMainBinding
+class ExpirationActivity : AppCompatActivity() {
+    lateinit var binding: ActivityExpirationBinding
     lateinit var sharedPref: SharedPreferences
+    private lateinit var recyclerView: RecyclerView
+    private lateinit var productAdapter: ProductAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityMainBinding.inflate(layoutInflater)
+        binding = ActivityExpirationBinding.inflate(layoutInflater)
         val view = binding.root
         setContentView(view)
 
@@ -35,7 +36,7 @@ class MainActivity : AppCompatActivity() {
         val navigationView = findViewById<NavigationView>(R.id.nav_view)
 
         // Khởi tạo SharedPreferences
-        sharedPref = getSharedPreferences("user_data", Context.MODE_PRIVATE)
+        sharedPref = getSharedPreferences("user_data", MODE_PRIVATE)
 
         // Lấy thông tin người dùng từ SharedPreferences
         val username = sharedPref.getString("username", "") ?: ""
@@ -90,5 +91,17 @@ class MainActivity : AppCompatActivity() {
         binding.btnOpenDrawer.setOnClickListener {
             drawer.openDrawer(GravityCompat.START)
         }
+
+//main
+        recyclerView = findViewById(R.id.ListExpiraton)
+        recyclerView.layoutManager = LinearLayoutManager(this)
+
+        // Lấy danh sách sản phẩm sắp hết hạn (trong 15 ngày tới)
+        val dbProducts = DatabaseProducts(this)
+        val productList = ArrayList(dbProducts.getProductsExpiringSoon(15))  // Chuyển List thành ArrayList
+        productAdapter = ProductAdapter(this, productList)
+        recyclerView.adapter = productAdapter
+
+
     }
 }
