@@ -15,7 +15,7 @@ import java.util.List;
 
 public class DatabaseProducts extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "Products_Database";
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 2;
     private static final String TABLE_NAME = "Products";
     private static final String COLUMN_PRODUCT_ID = "ProductID";
     private static final String COLUMN_PRODUCT_NAME = "ProductName";
@@ -115,36 +115,31 @@ public class DatabaseProducts extends SQLiteOpenHelper {
         return deletedRows > 0;
     }
 
-    public List<Products> getProductsByBarcodes(List<String> barcodes) {
-        List<Products> productList = new ArrayList<>();
+    public Products getProductByBarcode(String barcode) {
         SQLiteDatabase db = this.getReadableDatabase();
+        Products product = null;
 
-        try {
-            // Chuyển đổi danh sách barcodes thành chuỗi dấu hỏi
-            String placeholders = new String(new char[barcodes.size()]).replace("\0", "?").trim();
-            String selection = COLUMN_PRODUCT_BARCODE + " IN (" + placeholders + ")";
-            String[] selectionArgs = barcodes.toArray(new String[0]);
+        Cursor cursor = db.query(TABLE_NAME, null, COLUMN_PRODUCT_BARCODE + " = ?", new String[]{barcode}, null, null, null);
+        if (cursor != null && cursor.moveToFirst()) {
+            String productID = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_PRODUCT_ID));
+            String productName = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_PRODUCT_NAME));
+            String productQuantity = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_PRODUCT_QUANTITY));
+            String productUnit = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_PRODUCT_UNIT));
+            String productBarcode = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_PRODUCT_BARCODE));
+            String productPrice = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_PRODUCT_PRICE));
+            String productStatus = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_PRODUCT_STATUS));
+            String productManufact = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_PRODUCT_MANUFACTURING));
+            String productExpiration = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_PRODUCT_EXPIRATION));
 
-            Cursor cursor = db.query(TABLE_NAME, null, selection, selectionArgs, null, null, null);
+            Date PManu = Date.valueOf(productManufact);
+            Date PExpi = Date.valueOf(productExpiration);
 
-            if (cursor.moveToFirst()) {
-                do {
-                    String productName = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_PRODUCT_NAME));
-                    String productQuantity = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_PRODUCT_QUANTITY));
-                    String productUnit = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_PRODUCT_UNIT));
-                    String productBarcode = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_PRODUCT_BARCODE));
-                    String productPrice = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_PRODUCT_PRICE));
-
-                    Products product = new Products(null, productName, productQuantity, productUnit, productBarcode, productPrice, null, null, null);
-                    productList.add(product);
-                } while (cursor.moveToNext());
-            }
-            cursor.close();
-        } finally {
-            db.close();
+            product = new Products(productID, productName, productQuantity, productUnit, productBarcode, productPrice, productStatus, PManu, PExpi);
         }
+        cursor.close();
+        db.close();
 
-        return productList;
+        return product;
     }
 
     public List<Products> getProductsExpiringSoon(int days) {

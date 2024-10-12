@@ -96,9 +96,9 @@ class ExpirationActivity : AppCompatActivity() {
         recyclerView = findViewById(R.id.ListExpiraton)
         recyclerView.layoutManager = LinearLayoutManager(this)
 
-        // Lấy danh sách sản phẩm sắp hết hạn (trong 15 ngày tới)
+        // Lấy danh sách sản phẩm sắp hết hạn (trong 30 ngày tới)
         val dbProducts = DatabaseProducts(this)
-        val productList = ArrayList(dbProducts.getProductsExpiringSoon(15))  // Chuyển List thành ArrayList
+        val productList = ArrayList(dbProducts.getProductsExpiringSoon(30))  // Chuyển List thành ArrayList
         productAdapter = ProductAdapter(this, productList)
         recyclerView.adapter = productAdapter
 

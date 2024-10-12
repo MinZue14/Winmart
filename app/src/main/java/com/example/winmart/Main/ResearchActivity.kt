@@ -1,17 +1,23 @@
 package com.example.winmart.Main
 
 import android.app.Activity
+import android.app.AlertDialog
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
+import android.view.WindowManager
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
+import com.example.winmart.Database.DatabaseProducts
 import com.example.winmart.MainActivity
+import com.example.winmart.Object.Products
 import com.example.winmart.R
 import com.example.winmart.databinding.ActivityResearchBinding
 import com.example.winmart.databinding.HeaderMenuBinding
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.navigation.NavigationView
 import com.google.zxing.integration.android.IntentIntegrator
 
@@ -97,17 +103,54 @@ class ResearchActivity : AppCompatActivity() {
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (resultCode == Activity.RESULT_OK){
-            val result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data )
+        if (resultCode == Activity.RESULT_OK) {
+            val result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data)
             if (result != null) {
-                if(result.getContents() == null) {
-                    Toast.makeText(this, "Cancelled", Toast.LENGTH_LONG).show();
+                if (result.contents == null) {
+                    Toast.makeText(this, "Đã hủy", Toast.LENGTH_LONG).show()
                 } else {
-                    Toast.makeText(this, "Scanned: " + result.getContents(), Toast.LENGTH_LONG).show();
+                    val barcode = result.contents
+                    val db = DatabaseProducts(this)
+                    val product = db.getProductByBarcode(barcode)
+
+                    if (product != null) {
+                        // Nếu sản phẩm có trong cơ sở dữ liệu, hiển thị dialog
+                        showProductDialog(product)
+                    } else {
+                        // Nếu không có sản phẩm, hiển thị thông báo
+                        Toast.makeText(this, "Không có sản phẩm trong kho", Toast.LENGTH_LONG)
+                            .show()
+                    }
                 }
             } else {
                 super.onActivityResult(requestCode, resultCode, data)
             }
         }
+    }
+
+    private fun showProductDialog(product: Products) {
+        val dialogView = layoutInflater.inflate(R.layout.table_product, null)
+        val dialog = BottomSheetDialog(this)
+
+        dialog.setContentView(dialogView)
+
+
+        // Thiết lập dữ liệu cho các trường trong table_product.xml
+        dialogView.findViewById<TextView>(R.id.TextViewBarcode).text = product.productBarcode
+        dialogView.findViewById<TextView>(R.id.TextViewName).text = product.productName
+        dialogView.findViewById<TextView>(R.id.TextViewQuantity).text = product.productQuantity.toString()
+        dialogView.findViewById<TextView>(R.id.TextViewPrice).text = product.productPrice.toString()
+        dialogView.findViewById<TextView>(R.id.TextViewUnit).text = product.productUnit
+        dialogView.findViewById<TextView>(R.id.TextViewStatus).text = product.productStatus
+        dialogView.findViewById<TextView>(R.id.TextViewManufact).text = product.productManufacturing.toString()
+        dialogView.findViewById<TextView>(R.id.TextViewExpiration).text = product.productExpiration.toString()
+
+        val layoutParams = dialog.window?.attributes
+        layoutParams?.width = WindowManager.LayoutParams.MATCH_PARENT
+        layoutParams?.height = WindowManager.LayoutParams.WRAP_CONTENT // Hoặc tùy chỉnh chiều cao nếu cần
+        dialog.window?.attributes = layoutParams
+
+        // Hiển thị dialog
+        dialog.show()
     }
 }
